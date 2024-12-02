@@ -11,7 +11,7 @@ Prerequisites
 4. Install Docker desktop
 
 
-Running the App
+# Running the App
 
 Make sure install all dependencies
 1. kebormed.grpcservice 
@@ -46,9 +46,7 @@ http://localhost:5106
 5. For api test
 https://localhost:44303/swagger/index.html
 
-
-Execute docker commands :
-
+# Execute docker commands :
 7. docker build -t mssql_demo .
 8. docker run -p 1433:1433 --name mssql_demo_container -v "$(pwd):/backup" -d mssql_demo
 
@@ -58,7 +56,7 @@ If the above docker run command (8) doesn’t work, use:
 
 Once the container is created, we can make sure it is running in the docker desktop software. 
 
-10. SQL server details
+# SQL server details
 sql servername : localhost, 1433;
 username : sa;
 password : AdminStrong@Passw0rd
