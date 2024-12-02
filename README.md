@@ -51,7 +51,8 @@ Execute docker commands :
 
 7. docker build -t mssql_demo .
 
-execute first 8 command only if 8 not working then and only execute 9
+Execute first 8 command only if 8 not working then and only execute 9
+
 8. docker run -p 1433:1433 --name mssql_demo_container -v "$(pwd):/backup" -d mssql_demo
 9. docker run -p 1433:1433 --name mssql_demo_container -d mssql_demo
 
