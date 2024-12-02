@@ -2,7 +2,7 @@
 
 This .net core(8) application demonstrates the implementation of User and Organization CRUD operation with query string api include pagination and User can associate/disassociate from organization 
 
-Getting Started
+# Getting Started
 
 Prerequisites
 1. Clone the repository: git clone https://github.com/Dash-Technologies-Inc/KeborMed-Backend.git cd <project_directory>
