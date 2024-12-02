@@ -47,12 +47,11 @@ http://localhost:5106
 https://localhost:44303/swagger/index.html
 
 # Execute docker commands :
-7. docker build -t mssql_demo .
-8. docker run -p 1433:1433 --name mssql_demo_container -v "$(pwd):/backup" -d mssql_demo
+1. docker build -t mssql_demo .
+2. docker run -p 1433:1433 --name mssql_demo_container -v "$(pwd):/backup" -d mssql_demo
 
 If the above docker run command (8) doesn’t work, use: 
-
-9. docker run -p 1433:1433 --name mssql_demo_container -d mssql_demo
+3. docker run -p 1433:1433 --name mssql_demo_container -d mssql_demo
 
 Once the container is created, we can make sure it is running in the docker desktop software. 
 
