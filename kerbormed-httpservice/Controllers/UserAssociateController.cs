@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-using kebormed.grpcservice.Models;
 using kerbormed_httpservice.IService;
 using kerbormed_httpservice.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +16,7 @@ namespace kerbormed_httpservice.Controllers
 
 
         [HttpPost("AssociateUserToOrganization")]
-        public async Task<IActionResult> AssociateUserToOrganization(UserOrganization userOrganization)
+        public async Task<IActionResult> AssociateUserToOrganization(UserOrganizations userOrganization)
         {
             try
             {
@@ -34,7 +33,7 @@ namespace kerbormed_httpservice.Controllers
         }
 
         [HttpPost("DisassociateUserFromOrganization")]
-        public async Task<IActionResult> DisassociateUserFromOrganization(UserOrganization userOrganization)
+        public async Task<IActionResult> DisassociateUserFromOrganization(UserOrganizations userOrganization)
         {
             try
             {

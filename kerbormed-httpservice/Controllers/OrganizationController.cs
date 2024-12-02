@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace kerbormed_httpservice.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+ 
     public class OrganizationController : Controller
     {
         private readonly IOrganizationService _organizationService;

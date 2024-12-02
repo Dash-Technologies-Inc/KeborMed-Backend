@@ -1,5 +1,4 @@
-﻿using kebormed.grpcservice.Models;
-using kebormed.grpcservice.Protos;
+﻿using kebormed.grpcservice.Protos;
 using kerbormed_httpservice.IService;
 using kerbormed_httpservice.Model;
 using static kebormed.grpcservice.Protos.QueryOrganizations.Types;
@@ -15,7 +14,7 @@ namespace kerbormed_httpservice.Service
             _grpcClient = grpcClient;
         }
 
-        public async Task<AssociateUserToOrganization.Types.Response> AssociateUserToOrganization(UserOrganization userOrganization)
+        public async Task<AssociateUserToOrganization.Types.Response> AssociateUserToOrganization(UserOrganizations userOrganization)
         {
             var request = new AssociateUserToOrganization.Types.Request
             {
@@ -24,7 +23,7 @@ namespace kerbormed_httpservice.Service
             };
             return await _grpcClient.AssociateUserToOrganizationAsync(request);
         }
-        public async Task<DisassociateUserFromOrganization.Types.Response> DisassociateUserFromOrganization(UserOrganization userOrganization)
+        public async Task<DisassociateUserFromOrganization.Types.Response> DisassociateUserFromOrganization(UserOrganizations userOrganization)
         {
             var request = new DisassociateUserFromOrganization.Types.Request
             {
