@@ -16,17 +16,17 @@ Prerequisites
 Make sure install all dependencies
 1. kebormed.grpcservice 
 	1. Frameworks
-		a. Microsoft.AspNetCore.App
-		b. Microsoft.NETCore.App
+		1. Microsoft.AspNetCore.App
+		2. Microsoft.NETCore.App
 	2. Add required NugGet packages
-		a. Google.Protobuf
-		b. Grpc
-		c. Grpc.AspNetCore
-		d. Grpc.Net.Client
-		e. Grpc.Tools
-		f. Microsoft.EntityFrameworkCore.Design
-		g. Microsoft.EntityFrameworkCore.SqlServer
-		h. Microsoft.EntityFrameworkCore.Tools
+		1. Google.Protobuf
+		2. Grpc
+		3. Grpc.AspNetCore
+		4. Grpc.Net.Client
+		5. Grpc.Tools
+		6. Microsoft.EntityFrameworkCore.Design
+		7. Microsoft.EntityFrameworkCore.SqlServer
+		8. Microsoft.EntityFrameworkCore.Tools
 
 2. kerbormed-httpservice
 	1. Frameworks
