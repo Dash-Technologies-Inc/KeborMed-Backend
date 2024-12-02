@@ -14,7 +14,7 @@ namespace kerbormed_httpservice.Controllers
             _userService = userService;
         }
 
-
+        // API Create User
         [HttpPost("CreateUser")]
         public async Task<IActionResult> CreateUser(User user)
         {
@@ -30,6 +30,7 @@ namespace kerbormed_httpservice.Controllers
             }
         }
 
+        // API Get User By User Id
         [HttpGet("GetUser/{userId}")]
         public async Task<IActionResult> GetUser(int userId)
         {
@@ -40,22 +41,39 @@ namespace kerbormed_httpservice.Controllers
             }
             catch (RpcException ex)
             {
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                // Handle gRPC exceptions (e.g., if the service is unavailable)
+                return StatusCode(500, $"{ex.Message}");
             }
             catch (Exception ex)
             {
+                // Handle other general exceptions
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
 
+        // API Update User By User Id
         [HttpPost("UpdateUser/{userId}")]
         [ProducesResponseType(typeof(User), 200)]
         public async Task<IActionResult> UpdateUser(int userId, [FromBody] User user)
         {
-            var response = await _userService.UpdateUserAsync(userId, user);
-            return Ok(response);
+            try
+            {
+                var response = await _userService.UpdateUserAsync(userId, user);
+                return Ok(response);
+            }
+            catch (RpcException ex)
+            {
+                // Handle gRPC exceptions (e.g., if the service is unavailable)
+                return StatusCode(500, $"{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Handle other general exceptions
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
+        // API Delete User By User Id
         [HttpDelete("DeleteUser/{userId}")]
         public async Task<IActionResult> DeleteUser(int userId)
         {
@@ -65,7 +83,7 @@ namespace kerbormed_httpservice.Controllers
 
                 if (response.Success)
                 {
-                    return Ok(response); 
+                    return Ok(response);
                 }
                 else
                 {
@@ -75,7 +93,8 @@ namespace kerbormed_httpservice.Controllers
             }
             catch (RpcException ex)
             {
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                // Handle gRPC exceptions (e.g., if the service is unavailable)
+                return StatusCode(500, $"{ex.Message}");
             }
             catch (Exception ex)
             {
@@ -83,6 +102,7 @@ namespace kerbormed_httpservice.Controllers
             }
         }
 
+        // API Query User By User Id
         [HttpPost("QueryUser")]
         public async Task<IActionResult> QueryUser(Pagination pagination)
         {
@@ -93,10 +113,12 @@ namespace kerbormed_httpservice.Controllers
             }
             catch (RpcException ex)
             {
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                // Handle gRPC exceptions (e.g., if the service is unavailable)
+                return StatusCode(500, $"{ex.Message}");
             }
             catch (Exception ex)
             {
+                // Handle other general exceptions
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }

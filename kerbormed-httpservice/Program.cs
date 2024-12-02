@@ -12,11 +12,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddGrpcClient<kebormed.grpcservice.Protos.OrganizationService.OrganizationServiceClient>(o =>
 {
-    o.Address = new Uri("http://localhost:5106/");
+    o.Address = new Uri("http://localhost:5106/"); // Register the gRPC service
 });
 builder.Services.AddGrpcClient<kebormed.grpcservice.Protos.UserService.UserServiceClient>(o =>
 {
-    o.Address = new Uri("http://localhost:5106/");
+    o.Address = new Uri("http://localhost:5106/"); // Register the gRPC service
 });
 
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();

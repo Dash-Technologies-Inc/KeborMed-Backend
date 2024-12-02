@@ -14,7 +14,7 @@ namespace kerbormed_httpservice.Controllers
             _userAssociateService = userAssociateService;
         }
 
-
+        // API Associate User To Organization
         [HttpPost("AssociateUserToOrganization")]
         public async Task<IActionResult> AssociateUserToOrganization(UserOrganizations userOrganization)
         {
@@ -22,16 +22,14 @@ namespace kerbormed_httpservice.Controllers
             {
                 var response = await _userAssociateService.AssociateUserToOrganization(userOrganization);
                 return Ok(response);
-
-
             }
             catch (RpcException ex)
             {
                 // Handle gRPC exceptions (e.g., if the service is unavailable)
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                return StatusCode(500, $"{ex.Message}");
             }
         }
-
+        // API Disassociate User From Organization
         [HttpPost("DisassociateUserFromOrganization")]
         public async Task<IActionResult> DisassociateUserFromOrganization(UserOrganizations userOrganization)
         {
@@ -45,10 +43,10 @@ namespace kerbormed_httpservice.Controllers
             catch (RpcException ex)
             {
                 // Handle gRPC exceptions (e.g., if the service is unavailable)
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                return StatusCode(500, $"{ex.Message}");
             }
         }
-
+        // API Query User From Organization
         [HttpPost("QueryUsersForOrganization/{organizationId}")]
         public async Task<IActionResult> QueryUsersForOrganization(Pagination pagination, int organizationId)
         {
@@ -60,7 +58,7 @@ namespace kerbormed_httpservice.Controllers
             catch (RpcException ex)
             {
                 // Handle gRPC exceptions (e.g., if the service is unavailable)
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                return StatusCode(500, $"{ex.Message}");
             }
             catch (Exception ex)
             {

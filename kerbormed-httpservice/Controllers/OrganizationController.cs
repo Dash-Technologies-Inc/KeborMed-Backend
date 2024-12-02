@@ -16,6 +16,7 @@ namespace kerbormed_httpservice.Controllers
             _organizationService = organizationService;
         }
 
+        // API Create Organization
         [HttpPost("CreateOrganization")]
         public async Task<IActionResult> CreateOrganization([FromBody] Organization request)
         {
@@ -23,16 +24,15 @@ namespace kerbormed_httpservice.Controllers
             {
                 var response = await _organizationService.CreateOrganizationAsync(request);
                 return Ok(response);
-
-
             }
             catch (RpcException ex)
             {
                 // Handle gRPC exceptions (e.g., if the service is unavailable)
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                return StatusCode(500, $"{ex.Message}");
             }
         }
 
+        // API Get Organization
         [HttpGet("GetOrganization/{organizationId}")]
         public async Task<IActionResult> GetOrganization(int organizationId)
         {
@@ -43,7 +43,7 @@ namespace kerbormed_httpservice.Controllers
             }
             catch (RpcException ex)
             {
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                return StatusCode(500, $"{ex.Message}");
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace kerbormed_httpservice.Controllers
             }
         }
 
-
+        // API Update Organization
         [HttpPost("UpdateOrganization/{organizationId}")]
         [ProducesResponseType(typeof(Organization), 200)]
         public async Task<IActionResult> UpdateOrganization(int organizationId, [FromBody] Organization request)
@@ -60,7 +60,7 @@ namespace kerbormed_httpservice.Controllers
             return Ok(response);
         }
 
-
+        // API Delete Organization
         [HttpDelete("DeleteOrganization/{organizationId}")]
         public async Task<IActionResult> DeleteOrganization(int organizationId)
         {
@@ -72,7 +72,7 @@ namespace kerbormed_httpservice.Controllers
             catch (RpcException ex)
             {
                 // Handle gRPC errors (e.g., if the service is unavailable)
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                return StatusCode(500, $"{ex.Message}");
             }
             catch (Exception ex)
             {
@@ -81,7 +81,7 @@ namespace kerbormed_httpservice.Controllers
             }
         }
 
-
+        // API Query Organization
         [HttpPost("QueryOrganizations")]
         public async Task<IActionResult> QueryOrganizations(Pagination pagination)
         {
@@ -93,7 +93,7 @@ namespace kerbormed_httpservice.Controllers
             catch (RpcException ex)
             {
                 // Handle gRPC exceptions (e.g., if the service is unavailable)
-                return StatusCode(500, $"gRPC Error: {ex.Message}");
+                return StatusCode(500, $"{ex.Message}");
             }
             catch (Exception ex)
             {
