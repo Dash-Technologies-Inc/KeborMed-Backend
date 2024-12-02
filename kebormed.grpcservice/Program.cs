@@ -18,7 +18,6 @@ builder.Services.AddSingleton(GrpcChannel.ForAddress("http://localhost:5106"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
 app.MapGrpcService<OrganizationService>();
 app.MapGrpcService<UserService>();
 

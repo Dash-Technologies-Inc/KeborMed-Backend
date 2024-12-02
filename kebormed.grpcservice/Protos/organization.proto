@@ -23,7 +23,7 @@ message CreateOrganization {
     }
     message Response {
         int32 OrganizationId = 1;
-       
+        google.protobuf.StringValue Message = 2; 
     }
 }
 
@@ -36,7 +36,7 @@ message GetOrganization {
         string Name = 1;
         string Address = 2;
         string CreatedAt = 3; 
-        string UpdatedAt = 4; 
+        google.protobuf.StringValue UpdatedAt = 4; 
     }
 }
 

@@ -22,166 +22,265 @@ namespace kebormed.grpcservice.Services
 
         public override async Task<CreateUser.Types.Response> CreateUser(CreateUser.Types.Request request, ServerCallContext context)
         {
-            // Check if a user with the same username or email already exists
-            var existingUser = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == request.Username || u.Email == request.Email);
-
-            if (!Regex.IsMatch(request.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            try
             {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Please enter valid email address"));
+
+                // If organization name not entered
+                if (string.IsNullOrWhiteSpace(request.Name))
+                {
+                    return new CreateUser.Types.Response
+                    {
+                        Message = "Please enter name"
+                    };
+                }
+
+                // If name container special character
+                var specialCharacterRegex = new Regex(@"^[a-zA-Z0-9\s]+$");
+                if (!specialCharacterRegex.IsMatch(request.Name))
+                {
+                    return new CreateUser.Types.Response
+                    {
+                        Message = "Name should not contain special characters. Only letters, numbers, and spaces are allowed."
+                    };
+                }
+
+                // If organization name not entered
+                if (string.IsNullOrWhiteSpace(request.Username))
+                {
+                    return new CreateUser.Types.Response
+                    {
+                        Message = "Please enter username"
+                    };
+                }
+
+                // Check if a user with the same username or email already exists
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Username == request.Username || u.Email == request.Email);
+
+                // Check email is valid or not
+                if (!Regex.IsMatch(request.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                {
+                    return new CreateUser.Types.Response
+                    {
+                        Message = "Please enter valid email address."
+                    };
+                }
+
+                // Return if user is exist
+                if (existingUser != null)
+                {
+                    return new CreateUser.Types.Response
+                    {
+                        Message = "Username or email already exists."
+                    };
+                }
+
+                // Create a new user entity
+                var user = new Models.User
+                {
+                    Name = request.Name,
+                    Username = request.Username,
+                    Email = request.Email,
+                    CreatedAt = DateTime.UtcNow,
+                    IsDeleted = false
+                };
+
+                // Add the user to the database
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Return the user ID and messsage in the response
+                return new CreateUser.Types.Response
+                {
+                    UserId = user.Id,
+                    Message = "User added sucessfully."
+                };
             }
-
-            if (existingUser != null)
+            catch (Exception ex)
             {
-                throw new RpcException(new Status(StatusCode.AlreadyExists, "Username or email already exists"));
+                // Handle gRPC-specific exceptions and return with status code
+                return new CreateUser.Types.Response
+                {
+                    UserId = 0,
+                    Message = ex.Message
+                };
             }
-
-            // Create a new user entity
-            var user = new Models.User
-            {
-                Name = request.Name,
-                Username = request.Username,
-                Email = request.Email,
-                CreatedAt = DateTime.UtcNow,
-                IsDeleted = false
-            };
-
-            // Add the user to the database
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            // Return the user ID in the response
-            return new CreateUser.Types.Response
-            {
-                UserId = user.Id
-            };
         }
 
         public override async Task<GetUser.Types.Response> GetUser(GetUser.Types.Request request, ServerCallContext context)
         {
-            var user = await _context.Users
-              .Where(o => o.Id == request.UserId && o.IsDeleted == false)
-              .FirstOrDefaultAsync();
-
-            if (user == null)
+            try
             {
-                throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
+                // Find the user by ID
+                var user = await _context.Users
+                  .Where(o => o.Id == request.UserId && o.IsDeleted == false)
+                  .FirstOrDefaultAsync();
+
+                // Return if user not found
+                if (user == null)
+                {
+                    throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
+                }
+
+                return new GetUser.Types.Response
+                {
+                    Name = user.Name,
+                    Username = user.Username,
+                    Email = user.Email,
+                    CreatedAt = user.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
+                    UpdatedAt = user.UpdatedAt != DateTime.MinValue
+                    ? user.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                    : null  // Handle nullable UpdatedAt
+                };
+
             }
-
-            return new GetUser.Types.Response
+            catch (Exception ex)
             {
-                Name = user.Name,
-                Username = user.Username,
-                Email = user.Email,
-                CreatedAt = user.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
-                UpdatedAt = user.UpdatedAt?.ToString("yyyy-MM-dd HH:mm:ss")
-            };
+                // Handle gRPC-specific exceptions and return with status code
+                throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+            }
         }
 
         public override async Task<UpdateUser.Types.Response> UpdateUser(UpdateUser.Types.Request request, ServerCallContext context)
         {
-            var user = await _context.Users.FindAsync(request.UserId);
-
-            if (user == null)
+            try
             {
-                return new UpdateUser.Types.Response
+                // Find the user by ID
+                var user = await _context.Users.FindAsync(request.UserId);
+
+                if (user == null)
                 {
-                    Success = false,
-                    Message = "User not found"
-                };
+                    return new UpdateUser.Types.Response
+                    {
+                        Success = false,
+                        Message = "User not found"
+                    };
+                }
+
+                user.Name = request.Name;
+                user.Username = request.Username;
+                user.Email = request.Email;
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return new UpdateUser.Types.Response { Success = true, Message = "User updated sucessfully." };
             }
-
-            user.Name = request.Name;
-            user.Username = request.Username;
-            user.Email = request.Email;
-            user.UpdatedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-
-            return new UpdateUser.Types.Response { Success = true,Message = "User updated sucessfully." };
+            catch (Exception ex)
+            {
+                // Handle gRPC-specific exceptions and return with status code
+                return new UpdateUser.Types.Response { Success = false, Message = ex.Message };
+            }
         }
 
         public override async Task<DeleteUser.Types.Response> DeleteUser(DeleteUser.Types.Request request, ServerCallContext context)
         {
-            // Find the organization by ID
-            var user = await _context.Users.FindAsync(request.UserId);
-            if (user == null)
+            try
             {
+                // Find the user by ID
+                var user = await _context.Users.Where(o => o.Id == request.UserId && o.IsDeleted == false)
+                   .FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    return new DeleteUser.Types.Response
+                    {
+                        Success = false,
+                        Message = "User not found"
+                    };
+                }
+                user.IsDeleted = true;
+                user.DeletedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                // Return success response
+                return new DeleteUser.Types.Response
+                {
+                    Success = true,
+                    Message = $"User with ID {request.UserId} successfully deleted."
+                };
+            }
+            catch (Exception ex)
+            {
+                // Handle gRPC-specific exceptions and return with status code
                 return new DeleteUser.Types.Response
                 {
                     Success = false,
-                    Message = "Organization not found"
+                    Message = ex.Message
                 };
             }
-            user.IsDeleted = true;
-            user.DeletedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
-
-            // Return success response
-            return new DeleteUser.Types.Response
-            {
-                Success = true,
-                Message = $"User with ID {request.UserId} successfully deleted."
-            };
         }
 
         public override async Task<QueryUsers.Types.Response> QueryUsers(QueryUsers.Types.Request request, ServerCallContext context)
         {
-            var query = _context.Users.Where(o => o.IsDeleted == false).AsQueryable();
-
-            if (!string.IsNullOrEmpty(request.OrderBy))
+            try
             {
-                switch (request.OrderBy.ToLower())
+                // Get all users
+                var query = _context.Users.Where(o => o.IsDeleted == false).AsQueryable();
+
+                // Set order by name, username or createdat
+                if (!string.IsNullOrEmpty(request.OrderBy))
                 {
-                    case "name":
-                        query = request.Direction == "asc" ? query.OrderBy(o => o.Name) : query.OrderByDescending(o => o.Name);
-                        break;
-                    case "username":
-                        query = request.Direction == "asc" ? query.OrderBy(o => o.Username) : query.OrderByDescending(o => o.Username);
-                        break;
-                    case "createdat":
-                        query = request.Direction == "asc" ? query.OrderBy(o => o.CreatedAt) : query.OrderByDescending(o => o.CreatedAt);
-                        break;
-                    default:
-                        break;
+                    switch (request.OrderBy.ToLower())
+                    {
+                        case "name":
+                            query = request.Direction == "asc" ? query.OrderBy(o => o.Name) : query.OrderByDescending(o => o.Name);
+                            break;
+                        case "username":
+                            query = request.Direction == "asc" ? query.OrderBy(o => o.Username) : query.OrderByDescending(o => o.Username);
+                            break;
+                        case "createdat":
+                            query = request.Direction == "asc" ? query.OrderBy(o => o.CreatedAt) : query.OrderByDescending(o => o.CreatedAt);
+                            break;
+                        default:
+                            break;
+                    }
                 }
+
+                var total = await query.CountAsync();
+
+                // Get the list of user as per pagination
+                var users = await query.Skip((request.Page - 1) * request.PageSize)
+                                        .Take(request.PageSize)
+                                        .Select(u => new QueryUsers.Types.User
+                                        {
+                                            UserId = u.Id,
+                                            Name = u.Name,
+                                            Username = u.Username,
+                                            Email = u.Email,
+                                            CreatedAt = u.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
+                                            UpdatedAt = u.UpdatedAt.ToString()
+                                        }).ToListAsync();
+
+                // Search user by name, email or email
+                if (!string.IsNullOrEmpty(request.QueryString))
+                {
+                    users = users
+                        .Where(o => o.Name.ToLower().Contains(request.QueryString.ToLower())
+                                 || o.Username.ToLower().Contains(request.QueryString.ToLower())
+                                 || o.Email.ToLower().Contains(request.QueryString.ToLower()))
+                        .ToList();
+                }
+
+                return new QueryUsers.Types.Response
+                {
+                    Page = request.Page,
+                    PageSize = request.PageSize,
+                    Total = total,
+                    Users = { users }
+                };
             }
-
-            var total = await query.CountAsync();
-            var users = await query.Skip((request.Page - 1) * request.PageSize)
-                                    .Take(request.PageSize)
-                                    .Select(u => new QueryUsers.Types.User
-                                    {
-                                        UserId = u.Id,
-                                        Name = u.Name,
-                                        Username = u.Username,
-                                        Email = u.Email,
-                                        CreatedAt = u.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
-                                        UpdatedAt = u.UpdatedAt.ToString()
-                                    }).ToListAsync();
-
-            if (!string.IsNullOrEmpty(request.QueryString))
+            catch (Exception ex)
             {
-                users = users
-                    .Where(o => o.Name.ToLower().Contains(request.QueryString.ToLower())
-                             || o.Username.ToLower().Contains(request.QueryString.ToLower())
-                             || o.Email.ToLower().Contains(request.QueryString.ToLower()))
-                    .ToList();
+                // Handle gRPC-specific exceptions and return with status code
+                throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
-
-            return new QueryUsers.Types.Response
-            {
-                Page = request.Page,
-                PageSize = request.PageSize,
-                Total = total,
-                Users = { users }
-            };
         }
 
         public override async Task<AssociateUserToOrganization.Types.Response> AssociateUserToOrganization(AssociateUserToOrganization.Types.Request request, ServerCallContext context)
         {
             try
             {
+                // Check user is already associated with organization or not 
                 var existingUser = await _context.UserOrganizations.Where(o => o.UserId == request.UserId && o.OrganizationId == request.OrganizationId).FirstOrDefaultAsync();
                 if (existingUser != null && existingUser?.IsAssociate == true)
                 {
@@ -215,6 +314,7 @@ namespace kebormed.grpcservice.Services
             }
             catch (Exception ex)
             {
+                // Handle gRPC-specific exceptions and return with status code
                 return new AssociateUserToOrganization.Types.Response
                 {
                     Success = false,
@@ -255,6 +355,7 @@ namespace kebormed.grpcservice.Services
             }
             catch (Exception ex)
             {
+                // Handle gRPC-specific exceptions and return with status code
                 return new DisassociateUserFromOrganization.Types.Response
                 {
                     Success = false,
@@ -268,67 +369,71 @@ namespace kebormed.grpcservice.Services
         QueryUsersForOrganization.Types.Request request,
         ServerCallContext context)
         {
-            //// Get base query
-            //var query = _context.UserOrganizations
-            //    .Where(uo => uo.OrganizationId == request.OrganizationId)
-            //    .Select(uo => uo.User)
-            //    .AsQueryable();
-
-            var query = from post in _context.UserOrganizations
-                        join meta in _context.Users on post.UserId equals meta.Id
-                        where post.OrganizationId == request.OrganizationId
-                        select new { Name = meta.Name, Username = meta.Username, Email = meta.Email, CreatedAt = meta.CreatedAt };
-
-            // Apply search filter
-            if (!string.IsNullOrEmpty(request.QueryString))
+            try
             {
-                query = query.Where(u =>
-                    u.Name.Contains(request.QueryString) ||
-                    u.Username.Contains(request.QueryString) ||
-                    u.Email.Contains(request.QueryString));
+                // Get base query
+
+                var query = from post in _context.UserOrganizations
+                            join meta in _context.Users on post.UserId equals meta.Id
+                            where post.OrganizationId == request.OrganizationId
+                            select new { Name = meta.Name, Username = meta.Username, Email = meta.Email, CreatedAt = meta.CreatedAt };
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(request.QueryString))
+                {
+                    query = query.Where(u =>
+                        u.Name.Contains(request.QueryString) ||
+                        u.Username.Contains(request.QueryString) ||
+                        u.Email.Contains(request.QueryString));
+                }
+
+                // Apply sorting
+                query = request.OrderBy?.ToLower() switch
+                {
+                    "name" => request.Direction?.ToLower() == "desc"
+                        ? query.OrderByDescending(u => u.Name)
+                        : query.OrderBy(u => u.Name),
+                    "username" => request.Direction?.ToLower() == "desc"
+                        ? query.OrderByDescending(u => u.Username)
+                        : query.OrderBy(u => u.Username),
+                    "email" => request.Direction?.ToLower() == "desc"
+                        ? query.OrderByDescending(u => u.Email)
+                        : query.OrderBy(u => u.Email),
+                    _ => query.OrderBy(u => u.Name) // Default sorting
+                };
+
+                // Get total count
+                var total = await query.CountAsync();
+
+                // Apply pagination
+                var users = await query
+                    .Skip((request.Page - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .ToListAsync();
+
+                // Map to gRPC response
+                var response = new QueryUsersForOrganization.Types.Response
+                {
+                    Page = request.Page,
+                    PageSize = request.PageSize,
+                    Total = total,
+                };
+
+                response.Users.AddRange(users.Select(u => new QueryUsersForOrganization.Types.User
+                {
+                    Name = u.Name,
+                    Username = u.Username,
+                    Email = u.Email,
+                    CreatedAt = u.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                }));
+
+                return response;
             }
-
-            // Apply sorting
-            query = request.OrderBy?.ToLower() switch
+            catch (Exception ex)
             {
-                "name" => request.Direction?.ToLower() == "desc"
-                    ? query.OrderByDescending(u => u.Name)
-                    : query.OrderBy(u => u.Name),
-                "username" => request.Direction?.ToLower() == "desc"
-                    ? query.OrderByDescending(u => u.Username)
-                    : query.OrderBy(u => u.Username),
-                "email" => request.Direction?.ToLower() == "desc"
-                    ? query.OrderByDescending(u => u.Email)
-                    : query.OrderBy(u => u.Email),
-                _ => query.OrderBy(u => u.Name) // Default sorting
-            };
-
-            // Get total count
-            var total = await query.CountAsync();
-
-            // Apply pagination
-            var users = await query
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync();
-
-            // Map to gRPC response
-            var response = new QueryUsersForOrganization.Types.Response
-            {
-                Page = request.Page,
-                PageSize = request.PageSize,
-                Total = total,
-            };
-
-            response.Users.AddRange(users.Select(u => new QueryUsersForOrganization.Types.User
-            {
-                Name = u.Name,
-                Username = u.Username,
-                Email = u.Email,
-                CreatedAt = u.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
-            }));
-
-            return response;
+                // Handle gRPC-specific exceptions and return with status code
+                throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+            }
         }
 
     }
