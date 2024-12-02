@@ -1,8 +1,10 @@
+/****** Create Database ******/
 CREATE DATABASE KebordMed;
 GO
 USE [KebordMed]
 GO
-/****** Object:  Table [dbo].[Organizations]    Script Date: 02-12-2024 10:59:01 AM ******/
+/****** Create Organization table ******/
+/****** Object:  Table [dbo].[Organizations]    Script Date: 02-12-2024 10:32:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -21,7 +23,8 @@ CREATE TABLE [dbo].[Organizations](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UserOrganizations]    Script Date: 02-12-2024 10:59:01 AM ******/
+/****** Create UserOrganizations Mapping table ******/
+/****** Object:  Table [dbo].[UserOrganizations]    Script Date: 02-12-2024 10:32:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -41,7 +44,8 @@ CREATE TABLE [dbo].[UserOrganizations](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 02-12-2024 10:59:01 AM ******/
+/****** Create Users table ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 02-12-2024 10:32:58 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -52,7 +56,7 @@ CREATE TABLE [dbo].[Users](
 	[Username] [nvarchar](450) NOT NULL,
 	[Email] [nvarchar](450) NOT NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
-	[UpdatedAt] [datetime2](7) NULL,
+	[UpdatedAt] [datetime2](7) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,
 	[IsDeleted] [bit] NULL,
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
@@ -60,4 +64,6 @@ CREATE TABLE [dbo].[Users](
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Users] ADD  DEFAULT ('0001-01-01T00:00:00.0000000') FOR [UpdatedAt]
 GO
