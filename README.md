@@ -5,9 +5,10 @@ This .net core(8) application demonstrates the implementation of User and Organi
 Getting Started
 
 Prerequisites
-1. Install Visual Studio 2022
-2. Install SQL 2019 Server and SSMS in windows (if required)
-3. Install Docker desktop
+1. Clone the repository: git clone https://github.com/Dash-Technologies-Inc/KeborMed-Backend.git cd <project_directory>
+2. Install Visual Studio 2022
+3. Install SQL 2019 Server and SSMS in windows (if required)
+4. Install Docker desktop
 
 
 Running the App
