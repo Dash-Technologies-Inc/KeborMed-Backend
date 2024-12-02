@@ -100,7 +100,7 @@ namespace kebormed.grpcservice.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("kebormed.grpcservice.Models.UserOrganization", b =>
+            modelBuilder.Entity("kebormed.grpcservice.Models.UserOrganizations", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -131,30 +131,7 @@ namespace kebormed.grpcservice.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganizationId");
-
-                    b.HasIndex("UserId");
-
                     b.ToTable("UserOrganizations");
-                });
-
-            modelBuilder.Entity("kebormed.grpcservice.Models.UserOrganization", b =>
-                {
-                    b.HasOne("kebormed.grpcservice.Models.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("kebormed.grpcservice.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organization");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

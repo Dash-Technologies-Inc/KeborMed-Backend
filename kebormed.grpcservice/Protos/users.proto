@@ -72,9 +72,9 @@ message QueryUsers {
     message Request {
         int32 page = 1;
         int32 pageSize = 2;
-        string orderBy = 3;
-        string direction = 4;
-        string queryString = 5; // for searching by name or username
+        google.protobuf.StringValue orderBy = 3;
+        google.protobuf.StringValue direction = 4;
+        google.protobuf.StringValue queryString = 5; // for searching by name or username
     }
 
     message Response {

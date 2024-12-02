@@ -44,9 +44,9 @@ message QueryOrganizations {
     message Request {
         int32 Page = 1; 
         int32 PageSize = 2; 
-        string OrderBy = 3; 
-        string Direction = 4; 
-        string QueryString = 5; 
+        google.protobuf.StringValue OrderBy = 3; 
+        google.protobuf.StringValue Direction = 4; 
+        google.protobuf.StringValue QueryString = 5; 
     }
 
     message Response {

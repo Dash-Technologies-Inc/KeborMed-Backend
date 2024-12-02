@@ -192,7 +192,7 @@ namespace kebormed.grpcservice.Services
                     };
                 }
 
-                var userOrg = new UserOrganization
+                var userOrg = new UserOrganizations
                 {
                     Id = 0,
                     UserId = request.UserId,

@@ -14,7 +14,7 @@ namespace kebormed.grpcservice.Data
 
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserOrganization> UserOrganizations { get; set; }  // Add this line
+        public DbSet<UserOrganizations> UserOrganizations { get; set; }  // Add this line
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -34,7 +34,7 @@ namespace kebormed.grpcservice.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
-            modelBuilder.Entity<UserOrganization>()
+            modelBuilder.Entity<UserOrganizations>()
     .HasKey(uo => uo.Id); // Single-column primary key
         
         }
