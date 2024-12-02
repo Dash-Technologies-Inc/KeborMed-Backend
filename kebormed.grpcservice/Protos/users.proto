@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+option csharp_namespace = "kebormed.grpcservice.Protos";
+
+package kebormed.grpcservice.generated;
+import "google/protobuf/wrappers.proto";
+
+service UserService {
+    rpc CreateUser (CreateUser.Request) returns (CreateUser.Response);
+    rpc GetUser (GetUser.Request) returns (GetUser.Response);
+    rpc UpdateUser (UpdateUser.Request) returns (UpdateUser.Response);
+    rpc DeleteUser (DeleteUser.Request) returns (DeleteUser.Response);
+    rpc QueryUsers (QueryUsers.Request) returns (QueryUsers.Response);
+    rpc AssociateUserToOrganization (AssociateUserToOrganization.Request) returns (AssociateUserToOrganization.Response);
+rpc DisassociateUserFromOrganization (DisassociateUserFromOrganization.Request) returns (DisassociateUserFromOrganization.Response);
+rpc QueryUsersForOrganization (QueryUsersForOrganization.Request) returns (QueryUsersForOrganization.Response);
+}
+
+message CreateUser {
+    message Request {
+        string Name = 1;       
+        string Username = 2;   
+        string Email = 3;      
+    }
+
+    message Response {
+        int32 UserId = 1;      
+    }
+}
+
+message GetUser {
+    message Request {
+        int32 userId = 1;
+    }
+
+    message Response {
+        string name = 1;
+        string username = 2;
+        string email = 3;
+        string createdAt = 4;
+        string updatedAt = 5;
+    }
+}
+
+message UpdateUser {
+    message Request {
+        int32 userId = 1;
+        string name = 2;
+        string username = 3;
+        string email = 4;
+    }
+
+    message Response {
+        bool success = 1;
+        string Message = 2; 
+    }
+}
+
+message DeleteUser {
+    message Request {
+        int32 userId = 1;
+        bool IsDeleted = 2;
+    }
+
+    message Response {
+        bool success = 1;
+        string Message = 2; 
+    }
+}
+
+message QueryUsers {
+    message Request {
+        int32 page = 1;
+        int32 pageSize = 2;
+        string orderBy = 3;
+        string direction = 4;
+        string queryString = 5; // for searching by name or username
+    }
+
+    message Response {
+        int32 page = 1;
+        int32 pageSize = 2;
+        int32 total = 3;
+        repeated User users = 4;
+    }
+
+    message User {
+        int32 userId = 1;
+        string name = 2;
+        string username = 3;
+        string email = 4;
+        string createdAt = 5;
+        string updatedAt = 6;
+    }
+}
+
+
+message AssociateUserToOrganization {
+    message Request {
+        int32 userId = 1;
+        int32 organizationId = 2;
+    }
+
+    message Response {
+        bool success = 1;
+        string Message = 2; 
+    }
+}
+
+message DisassociateUserFromOrganization {
+    message Request {
+        int32 userId = 1;
+        int32 organizationId = 2;
+    }
+
+    message Response {
+        bool success = 1;
+        string Message = 2; 
+    }
+}
+
+message QueryUsersForOrganization {
+    message Request {
+        int32 organizationId = 1;
+        int32 page = 2;
+        int32 pageSize = 3;
+        google.protobuf.StringValue orderBy = 4;
+        google.protobuf.StringValue direction = 5;
+        google.protobuf.StringValue queryString = 6;
+    }
+
+    message Response {
+        int32 page = 1;
+        int32 pageSize = 2;
+        int32 total = 3;
+        repeated User users = 4;
+    }
+
+    message User {
+        string name = 1;
+        string username = 2;
+        string email = 3;
+        string createdAt = 4;
+    }
+}

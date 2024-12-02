@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+option csharp_namespace = "kebormed.grpcservice.Protos";
+
+package kebormed.grpcservice.generated;
+import "google/protobuf/wrappers.proto";
+
+service OrganizationService {
+    rpc CreateOrganization (CreateOrganization.Request) returns (CreateOrganization.Response);
+    rpc GetOrganization (GetOrganization.Request) returns (GetOrganization.Response);
+    rpc QueryOrganizations (QueryOrganizations.Request) returns (QueryOrganizations.Response);
+    rpc UpdateOrganization (UpdateOrganization.Request) returns (UpdateOrganization.Response);
+    rpc DeleteOrganization (DeleteOrganization.Request) returns (DeleteOrganization.Response); 
+   
+}
+
+
+message CreateOrganization {
+    message Request {
+        int32 OrganizationId = 1;
+        string Name = 2;
+        string Address = 3;
+    }
+    message Response {
+        int32 OrganizationId = 1;
+       
+    }
+}
+
+message GetOrganization {
+    message Request {
+        int32 OrganizationId = 1;
+    }
+
+    message Response {
+        string Name = 1;
+        string Address = 2;
+        string CreatedAt = 3; 
+        string UpdatedAt = 4; 
+    }
+}
+
+message QueryOrganizations {
+    message Request {
+        int32 Page = 1; 
+        int32 PageSize = 2; 
+        string OrderBy = 3; 
+        string Direction = 4; 
+        string QueryString = 5; 
+    }
+
+    message Response {
+        int32 Page = 1;
+        int32 PageSize = 2;
+        int32 Total = 3; 
+        repeated Organization OrganizationList = 4; 
+    }
+
+    message Organization {
+        int32 OrganizationId = 1;
+        string Name = 2;
+        string Address = 3;
+        string CreatedAt = 4;
+    }
+}
+
+message UpdateOrganization {
+    message Request {
+        int32 OrganizationId = 1;
+        string Name = 2;
+        string Address = 3;
+    }
+
+    message Response {
+       bool Success = 1; 
+       string Message = 2; 
+
+    }
+}
+
+message DeleteOrganization {
+    message Request {
+        int32 OrganizationId = 1; 
+        bool IsDeleted = 2;
+    }
+
+    message Response {
+        bool Success = 1; 
+        string Message = 2; 
+    }
+}
+
